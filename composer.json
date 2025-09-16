@@ -29,6 +29,7 @@
         "nexmo/laravel": "^2.2",
         "nwidart/laravel-menus": "^4.0",
         "nwidart/laravel-modules": "5.1.0",
+        "predis/predis": "^3.2",
         "pusher/pusher-php-server": "^4.1",
         "razorpay/razorpay": "2.*",
         "spatie/flysystem-dropbox": "^1.0",
