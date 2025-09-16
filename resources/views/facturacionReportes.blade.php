@@ -5,41 +5,49 @@
 
 
 @section('content')
-<div class="container-fluid">
-    <h2 class="text-center mb-4">📄 Reportes de Facturación Electrónica</h2>
-    <div class="table-responsive">
-        <table id="facturasTable" class="table table-bordered table-striped">
-            <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Factura</th>
-                    <th>Fecha de Registro</th>
-                    <th>CUFE</th>
-                   <!-- <th>QR</th>-->
-                    <th>Cliente ID</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($facturasReportes as $factura)
+    <div class="container-fluid">
+        <h2 class="text-center mb-4">📄 Reportes de Facturación Electrónica</h2>
+        <div class="table-responsive">
+            <table id="facturasTable" class="table table-bordered table-striped">
+                <thead class="thead-dark">
                     <tr>
-                        <td>{{ $factura->id }}</td>
-                        <td>{{ $factura->invoice }}</td>
-                        <td>{{ $factura->dateregister }}</td>
-                        <td>{{ $factura->cude }}</td>
-                        <!--<td>{{ $factura->qrCode }}</td>-->
-                        <td>{{ $factura->client ? $factura->client->name : 'No disponible' }}</td>
-                            <td>
-                            <a class="btn btn-info" href="{{ $factura->Urlcude }}" target="_blank">
-                                <i class="fa fa-mouse-pointer" aria-hidden="true"></i> Web
-                            </a>
-                            </td>
+                        <th>ID</th>
+                        <th>Factura</th>
+                        <th>Fecha de Registro</th>
+                        <th>CUFE</th>
+                        <!-- <th>QR</th>-->
+                        <th>Cliente ID</th>
+                        <th>Acción</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($facturasReportes as $factura)
+                        <tr>
+                            <td><span>Emitida</span>
+                            </td>
+                            <td>{{ $factura->invoice }}</td>
+                            <td>{{ $factura->dateregister }}</td>
+                            <td>{{ $factura->contact_name }}</td>
+                            <td>${{ number_format($factura->totalToPay, 2, ',', '.') }}</td>
+
+                            <!--<td>{{ $factura->cude }}</td>-->
+                            <!--<td>{{ $factura->qrCode }}</td>-->
+
+                            <td>
+                                <a class="btn btn-primary" href="{{ $factura->Urlcude }}" target="_blank">
+                                    <i class="fa fa-file-pdf " style="font-size:20px" aria-hidden="true"></i> DIAN
+                                    <a class="btn btn-success" href="javascript:void(0)"
+                                        onclick="descargarPdf('{{ $factura->cude }}')">
+                                        <i class="fa fa-file-pdf" style="font-size:20px" aria-hidden="true"></i> PDF
+                                    </a>
+                            </td>
+
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 @endsection
 
 
@@ -56,9 +64,31 @@
             },
             "pageLength": 10,
             "lengthMenu": [5, 10, 25, 50],
-            "order": [[ 0, "desc" ]]
+            "order": [
+                [0, "desc"]
+            ]
         });
     });
 </script>
+<script>
+    function descargarPdf(cude) {
+        const url = "{{ env('URL_BILLING_API') }}" + cude;
 
-
+        fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer {{ env('BILLING_API_TOKEN') }}',
+                    'X-Environment': '{{ env('X_Environment') }}',
+                    'Accept': 'application/pdf'
+                }
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const pdfUrl = window.URL.createObjectURL(blob);
+                window.open(pdfUrl, '_blank'); // abre el PDF en una nueva pestaña
+            })
+            .catch(error => {
+                alert("Error descargando PDF: " + error);
+            });
+    }
+</script>
