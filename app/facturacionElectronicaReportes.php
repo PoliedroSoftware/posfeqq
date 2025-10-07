@@ -15,4 +15,10 @@ class facturacionElectronicaReportes extends Model
     protected $table = 'success_invoice_electronic';
 
     protected $guarded = [];
+
+    // Relación con el modelo Client
+    public function client()
+    {
+        return $this->belongsTo(ClientesFacturacionElectronica::class, 'client_id');
+    }
 }

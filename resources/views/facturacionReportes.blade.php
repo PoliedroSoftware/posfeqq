@@ -8,26 +8,30 @@
     <div class="container-fluid">
         <h2 class="text-center mb-4">📄 Reportes de Facturación Electrónica</h2>
         <div class="table-responsive">
-            <table id="facturasTable" class="table table-bordered table-striped">
+            <table id="facturasTable" class="table table-bordered table-striped display responsive nowrap" style="width:100%;">
+
                 <thead class="thead-dark">
                     <tr>
-                        <th>ID</th>
-                        <th>Factura</th>
-                        <th>Fecha de Registro</th>
-                        <th>CUFE</th>
+                        <th>Estado Facturación</th>
+                        <th>Número Factura</th>
+                        <th>Fecha de Emisión</th>
+                        <th>Cliente</th>
+                        <th>Pago Total</th>
+                        <!--<th>CUFE</th>-->
                         <!-- <th>QR</th>-->
-                        <th>Cliente ID</th>
+
                         <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($facturasReportes as $factura)
                         <tr>
-                            <td><span>Emitida</span>
+                            <td><span
+                                    style="background:#28a745; color:white; padding:4px 8px; border-radius:8px; font-size:14px;">Emitida</span>
                             </td>
                             <td>{{ $factura->invoice }}</td>
                             <td>{{ $factura->dateregister }}</td>
-                            <td>{{ $factura->contact_name }}</td>
+                            <td>{{ \Illuminate\Support\Str::limit($factura->contact_name, 50, '...') }}</td>
                             <td>${{ number_format($factura->totalToPay, 2, ',', '.') }}</td>
 
                             <!--<td>{{ $factura->cude }}</td>-->
@@ -54,22 +58,33 @@
 <!-- DataTables CSS & JS desde CDN -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+
+<!-- CSS Responsive para DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+
+<!-- JS Responsive para DataTables -->
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+
 
 <script>
     $(document).ready(function() {
         $('#facturasTable').DataTable({
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            responsive: true, // ✅ habilita el modo responsive
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
             },
-            "pageLength": 10,
-            "lengthMenu": [5, 10, 25, 50],
-            "order": [
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            order: [
                 [0, "desc"]
             ]
         });
     });
 </script>
+
 <script>
     function descargarPdf(cude) {
         const url = "{{ env('URL_BILLING_API') }}" + cude;

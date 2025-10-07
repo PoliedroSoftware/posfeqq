@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\facturacionElectronicaReportes;
-
+use Illuminate\Support\Facades\Response;
 
 class facturacionElectronicaReportesController extends Controller
 {
@@ -14,7 +14,7 @@ class facturacionElectronicaReportesController extends Controller
 
         $baseUrl = env('URL_SEARCH_DIAN'); // Obtiene la URL desde .env
         $UrlBilling = env('URL_BILLING_API');
-        // Eager Loading para optimizar la consulta
+
 
         // Consulta optimizada con orderBy
         $facturasReportes = facturacionElectronicaReportes::orderBy('invoice', 'desc')->get();
